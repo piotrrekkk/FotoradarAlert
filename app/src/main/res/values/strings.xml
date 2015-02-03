@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">FotoradarAlert_ver3</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Ustawienia</string>
+    <string name="refresh_data">Odśwież</string>
+    <string name="refreshing">Odświeżanie...</string>
+    <string name="show_more_days">Następne dni</string>
+    <string name="street">Street name</string>
+    <string name="city">City</string>
+    <string name="additional_description">Additional description</string>
+    <string name="last_update">Ostatnia aktualizacja:</string>
+    <string name="updated">Zaktualizowano pomyślnie</string>
+    <string name="please_update">Zsynchronizuj dane</string>
+    <string name="not_active_device">Brak aktywnych urządzeń</string>
+    <string name="title_activity_location_list">LocationList</string>
+
+</resources>
