@@ -5,7 +5,6 @@ import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import java.util.ArrayList;
@@ -23,7 +22,8 @@ public class LocationList extends ActionBarActivity {
         Log.d(Settings.DEBUG_TAG, "Locations length on second activity: " + locations.size());
 
         if(locations.size()>0) {
-            ArrayAdapter<Location> adapter = new ArrayAdapter<Location>(this,R.layout.list_item, locations);
+
+            ListAdapter adapter = new ListAdapter(this, locations);
             locationsListView.setAdapter(adapter);
         }
 
