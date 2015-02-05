@@ -11,6 +11,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import org.apache.http.HttpResponse;
@@ -34,9 +35,11 @@ import java.util.GregorianCalendar;
 public class MainActivity extends ActionBarActivity {
 
     public static SimpleDateFormat dateFormat = new SimpleDateFormat(Settings.DATE_FORMAT);
+    public static SimpleDateFormat dateFormatWholeDay = new SimpleDateFormat(Settings.DATE_FORMAT_WHOLE_DAY);
 
     Location location;
     ArrayList<Location> locations = new ArrayList<Location>();
+    ListView locationsListView;
 
     //define fields
     TextView lastUpdateTextView;
@@ -64,6 +67,8 @@ public class MainActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        locationsListView = (ListView) findViewById(R.id.locationsListView);
+
         //check updatedData
         SharedPreferences settings = getSharedPreferences(Settings.PREFERENCES, MODE_PRIVATE);
 
@@ -74,10 +79,10 @@ public class MainActivity extends ActionBarActivity {
         if(prefLastUpdateString!=null) {
             lastUpdateTextView.setText(getApplicationContext().getString(R.string.last_update) + prefLastUpdateString);
         }
-        streetTextView = (TextView) findViewById(R.id.streetTextView);
-        cityTextView = (TextView) findViewById(R.id.cityTextView);
-        additionalDescriptionTextView = (TextView) findViewById(R.id.additionalDescriptionTextView);
+        else {
 
+        }
+        refreshData();
         showMoreDays = (Button) findViewById(R.id.showMoreDays);
         showMoreDays.setOnClickListener(showMore);
     }
@@ -150,7 +155,12 @@ public class MainActivity extends ActionBarActivity {
                                 location.setStartDate(text);
                             }
                             else if(tagName.equalsIgnoreCase("endDate")) {
-                                location.setEndDate(text);
+                                if(text.length()<2){
+                                    location.setEndDate(null);
+                                }
+                                else {
+                                    location.setEndDate(text);
+                                }
                             }
                             break;
                         default:
@@ -187,7 +197,14 @@ public class MainActivity extends ActionBarActivity {
             Context context = getApplicationContext();
             CharSequence appStatus;
             Location actualLocation = new Location();
-            actualLocation = checkActualLocation(locations);
+            ArrayList<Location> actualLocations = new ArrayList<Location>();
+            actualLocations = checkActualLocation(locations);
+
+            if(actualLocations.size()>0) {
+                ListAdapter adapter = new ListAdapter(getApplicationContext(), actualLocations);
+                locationsListView.setAdapter(adapter);
+            }
+
 
             // locations = filterLocations(locations);
             if(actualLocation.getStreet()!=null) {
@@ -216,20 +233,35 @@ public class MainActivity extends ActionBarActivity {
 //        }
 //    }
 
-    private Location checkActualLocation(ArrayList<Location> locations) {
+    private ArrayList<Location> checkActualLocation(ArrayList<Location> locations) {
+        ArrayList<Location> actualLocations = new ArrayList<Location>();
+
         Location location = new Location();
         Calendar now = new GregorianCalendar();
         for (Location loc:locations) {
 
             if(now.after(loc.getStartDate()) && now.before(loc.getEndDate())) {
-                location = loc;
+                actualLocations.add(loc);
 //                Log.d(Settings.DEBUG_TAG,"Found");
+            }
+            else if(isSameDay(now, loc.getStartDate())) {
+                actualLocations.add(loc);
             }
             else {
 //                Log.d(Settings.DEBUG_TAG,"Not found");
             }
         }
-        return location;
+        return actualLocations;
+    }
+
+    private boolean isSameDay(Calendar cal1, Calendar cal2) {
+
+        if (cal1 == null || cal2 == null) {
+            throw new IllegalArgumentException("The dates must not be null");
+        }
+        return (cal1.get(Calendar.ERA) == cal2.get(Calendar.ERA) &&
+                cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR) &&
+                cal1.get(Calendar.DAY_OF_YEAR) == cal2.get(Calendar.DAY_OF_YEAR));
     }
 
     private void saveSettings(ArrayList<Location> locations, String lastUpdateString) {

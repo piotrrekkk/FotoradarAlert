@@ -15,5 +15,6 @@
     <string name="please_update">Zsynchronizuj dane</string>
     <string name="not_active_device">Brak aktywnych urządzeń</string>
     <string name="title_activity_location_list">LocationList</string>
+    <string name="whole_day">Cały dzień</string>
 
 </resources>

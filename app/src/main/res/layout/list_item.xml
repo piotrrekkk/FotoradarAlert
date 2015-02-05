@@ -12,7 +12,7 @@
         <TextView
             android:id="@+id/streetOnListTextView"
             android:layout_width="match_parent"
-            android:textSize="24sp"
+            android:textSize="16sp"
             android:layout_height="wrap_content"
             android:text="Street" />
         <TextView
@@ -31,7 +31,8 @@
         <TextView
             android:id="@+id/dateOnListTextView"
             android:layout_width="wrap_content"
-            android:textSize="24sp"
+            android:textColor="@color/blueish"
+            android:textSize="@dimen/rightColumnTextSize"
             android:layout_gravity="end"
             android:layout_height="wrap_content"
             android:text="Date" />
@@ -40,8 +41,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end"
+            android:textColor="@color/blueish"
             android:text="Time"
-            android:textSize="12sp"/>
+            android:textSize="@dimen/rightColumnTextSize"/>
     </LinearLayout>
 
 
