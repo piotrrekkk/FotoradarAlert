@@ -13,11 +13,13 @@
             android:id="@+id/streetOnListTextView"
             android:layout_width="match_parent"
             android:textSize="16sp"
+            android:textColor="@color/black"
             android:layout_height="wrap_content"
             android:text="Street" />
         <TextView
             android:id="@+id/cityOnListTextView"
             android:layout_width="match_parent"
+            android:textColor="@color/black"
             android:layout_height="wrap_content"
             android:text="City"
             android:textSize="12sp"/>
