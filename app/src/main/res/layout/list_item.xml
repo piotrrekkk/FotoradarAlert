@@ -1,52 +1,90 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="horizontal"
-    android:padding="@dimen/activity_horizontal_margin">
-
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:layout_margin="2dp"
+    android:padding="5dp"
+    android:background="@drawable/selector_card_background"
+    >
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="0dp"
-        android:layout_weight="1"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
-        <TextView
-            android:id="@+id/streetOnListTextView"
-            android:layout_width="match_parent"
-            android:textSize="16sp"
-            android:textColor="@color/black"
-            android:layout_height="wrap_content"
-            android:text="Street" />
-        <TextView
-            android:id="@+id/cityOnListTextView"
-            android:layout_width="match_parent"
-            android:textColor="@color/black"
-            android:layout_height="wrap_content"
-            android:text="City"
-            android:textSize="12sp"/>
-    </LinearLayout>
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="@dimen/medium_padding"
+        android:background="@color/actionbar_background">
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="0dp"
-        android:layout_weight="1"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
-        <TextView
-            android:id="@+id/dateOnListTextView"
-            android:layout_width="wrap_content"
-            android:textColor="@color/blueish"
-            android:textSize="@dimen/rightColumnTextSize"
-            android:layout_gravity="end"
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Date" />
+            android:orientation="horizontal"
+            android:paddingBottom="@dimen/abc_action_bar_icon_vertical_padding"
+            >
+            <TextView
+                android:id="@+id/streetOnListTextView"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:textSize="20sp"
+                android:textColor="@color/white"
+                android:layout_height="wrap_content"
+                android:text="Street" />
+            <TextView
+                android:id="@+id/cityOnListTextView"
+                android:layout_width="wrap_content"
+                android:textColor="@color/light_blue"
+                android:layout_height="wrap_content"
+                android:text="City"
+                android:textSize="10sp"/>
+        </LinearLayout>
+
         <TextView
-            android:id="@+id/hoursOnListTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:text="@string/description_text_view"
+            android:textColor="@color/light_blue"
+            android:id="@+id/additional_description_text_view"
+            />
+</LinearLayout>
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="@android:color/transparent"
+        android:paddingTop="@dimen/medium_padding"
+        android:paddingBottom="@dimen/medium_padding"
+        android:paddingLeft="@dimen/medium_padding"
+        android:layout_marginBottom="2dp">
+        <ImageView
+            android:id="@+id/whole_day_image_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_data_usage_grey600_18dp"
+            android:visibility="gone"/>
+        <ImageView
+            android:id="@+id/start_time_ImageView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_access_time_grey600_18dp"/>
+        <TextView
+            android:id="@+id/start_time_textView"
+            android:layout_width="wrap_content"
+            android:textColor="@color/grey"
+            android:textSize="14dp"
             android:layout_gravity="end"
-            android:textColor="@color/blueish"
-            android:text="Time"
-            android:textSize="@dimen/rightColumnTextSize"/>
+            android:layout_height="wrap_content"
+            android:text="@string/start_time_text_view" />
+        <ImageView
+            android:id="@+id/end_time_imageView"
+            android:layout_marginLeft="20dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_access_alarm_grey600_18dp"/>
+        <TextView
+            android:id="@+id/end_time_textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:textColor="@color/grey"
+            android:text="@string/end_time_text_view"
+            android:textSize="14dp"/>
     </LinearLayout>
-
-
 </LinearLayout>

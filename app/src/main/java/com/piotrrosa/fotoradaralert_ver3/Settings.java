@@ -5,6 +5,7 @@ package com.piotrrosa.fotoradaralert_ver3;
  */
 public class Settings {
     public static final String DATE_FORMAT = "d.M.yyyy HH:mm";
+    public static final String SHORT_DATE_FORMAT = "HH:mm";
     public static final String DATE_FORMAT_WHOLE_DAY = "d.M.yyyy";
 
     public static final String REQUEST_URL = "http://disparo.pl/android/locations.xml";

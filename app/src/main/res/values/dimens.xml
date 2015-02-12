@@ -5,4 +5,6 @@
     <dimen name="main_text_size">32sp</dimen>
     <dimen name="second_row_text_size">24sp</dimen>
     <dimen name="rightColumnTextSize">14sp</dimen>
+    <dimen name="small_padding">5dp</dimen>
+    <dimen name="medium_padding">10dp</dimen>
 </resources>

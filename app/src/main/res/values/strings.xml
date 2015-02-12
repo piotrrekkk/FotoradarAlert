@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">App Name</string>
+    <string name="app_name">FotoradarAlert</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Ustawienia</string>
     <string name="refresh_data">Odśwież</string>
@@ -16,5 +16,10 @@
     <string name="not_active_device">Brak aktywnych urządzeń</string>
     <string name="title_activity_location_list">LocationList</string>
     <string name="whole_day">Cały dzień</string>
+    <string name="description_text_view">Descripion to this location</string>
+    <string name="start_time_text_view">12:00</string>
+    <string name="end_time_text_view">15:00</string>
+    <string name="not_specified_time">Nie określono godziny</string>
+    <string name="list_is_empty">Lista aktualnie jest pusta</string>
 
 </resources>

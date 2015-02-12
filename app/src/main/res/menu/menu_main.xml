@@ -1,9 +1,10 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".MainActivity">
+    tools:context=".MainActivity"
+    >
     <item
-        android:id="@+id/refresh_data"
+        android:id="@+id/refresh_data_item"
         android:title="@string/refresh_data"
         android:icon="@android:drawable/stat_notify_sync"
         app:showAsAction="ifRoom"/>

@@ -2,12 +2,14 @@ package com.piotrrosa.fotoradaralert_ver3;
 
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ListView;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 
 
 public class LocationList extends ActionBarActivity {
@@ -19,12 +21,25 @@ public class LocationList extends ActionBarActivity {
         ArrayList<Location> locations = new ArrayList<Location>();
         locationsListView = (ListView) findViewById(R.id.locationsListView);
         locations = (ArrayList<Location>) getIntent().getSerializableExtra("locationsList");
-        Log.d(Settings.DEBUG_TAG, "Locations length on second activity: " + locations.size());
 
-        if(locations.size()>0) {
+        ArrayList<Location> currentLocations = new ArrayList<Location>();
+        Calendar now = new GregorianCalendar();
+        now.add(Calendar.DAY_OF_YEAR, -1);
+        for(Location loc:locations) {
+            if(loc.getStartDate().after(now)) {
+                currentLocations.add(loc);
+            }
+        }
 
-            ListAdapter adapter = new ListAdapter(this, locations);
+        if(currentLocations.size()>0) {
+            ListAdapter adapter = new ListAdapter(this, currentLocations);
+            locationsListView.addHeaderView(new View(this));
+            locationsListView.addFooterView(new View(this));
             locationsListView.setAdapter(adapter);
+        }
+        else {
+            CharSequence dataStatus = getString(R.string.list_is_empty);
+            CustomToast.show(dataStatus, this);
         }
 
     }

@@ -6,21 +6,34 @@
     android:orientation="vertical">
 
     <TextView
-    android:id="@+id/lastUpdateTextView"
+    android:id="@+id/main_activity_status_textView"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:text="@string/please_update"
-    android:gravity="right"/>
+    android:gravity="center"
+    android:paddingTop="@dimen/small_padding"
+    android:paddingBottom="@dimen/small_padding"
+    android:background="@color/little_grey"
+        />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight="1"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:layout_marginLeft="@dimen/medium_padding"
+        android:layout_marginRight="@dimen/medium_padding">
         <ListView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/locationsListView">
+            android:layout_height="match_parent"
+            android:id="@+id/locationsListView"
+            android:divider="@null"
+            android:dividerHeight="10dp"
+            android:listSelector="@android:color/transparent"
+            android:cacheColorHint="@android:color/transparent"
+            android:headerDividersEnabled="true"
+            android:footerDividersEnabled="true"
+            >
         </ListView>
     </LinearLayout>
     <Button

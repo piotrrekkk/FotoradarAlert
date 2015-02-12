@@ -35,12 +35,12 @@ import java.util.GregorianCalendar;
 public class MainActivity extends ActionBarActivity {
 
     public static SimpleDateFormat dateFormat = new SimpleDateFormat(Settings.DATE_FORMAT);
+    public static SimpleDateFormat shortDateFormat = new SimpleDateFormat(Settings.SHORT_DATE_FORMAT);
     public static SimpleDateFormat dateFormatWholeDay = new SimpleDateFormat(Settings.DATE_FORMAT_WHOLE_DAY);
-
+    public boolean loadingData;
     Location location;
     ArrayList<Location> locations = new ArrayList<Location>();
     ListView locationsListView;
-
     //define fields
     TextView lastUpdateTextView;
     TextView streetTextView;
@@ -64,6 +64,7 @@ public class MainActivity extends ActionBarActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        loadingData=false;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -73,7 +74,7 @@ public class MainActivity extends ActionBarActivity {
         SharedPreferences settings = getSharedPreferences(Settings.PREFERENCES, MODE_PRIVATE);
 
         //init fields
-        lastUpdateTextView = (TextView) findViewById(R.id.lastUpdateTextView);
+        lastUpdateTextView = (TextView) findViewById(R.id.main_activity_status_textView);
 
         String prefLastUpdateString = settings.getString(Settings.LAST_UPDATE_PREF, null);
         if(prefLastUpdateString!=null) {
@@ -95,18 +96,23 @@ public class MainActivity extends ActionBarActivity {
             bundle.putSerializable("locationsList",locations);
             Intent intent = new Intent(view.getContext(), LocationList.class);
             intent.putExtras(bundle);
-            Log.d(Settings.DEBUG_TAG,"Locations length: "+locations.size());
             startActivity(intent);
         }
     };
     private void refreshData() {
-        parserArrayIncrement = 0;
-        Context context = getApplicationContext();
-        CharSequence appStatus = context.getString(R.string.refreshing);
-        CustomToast.show(appStatus, context);
+        Log.d(Settings.DEBUG_TAG,"refreshing:"+loadingData);
+        if(loadingData==false) {
+            Log.d(Settings.DEBUG_TAG,"isLoading: "+loadingData);
+            parserArrayIncrement = 0;
+            Context context = getApplicationContext();
+            CharSequence appStatus = context.getString(R.string.refreshing);
+            CustomToast.show(appStatus, context);
+            //create sync task
+            loadingData=true;
+            Log.d(Settings.DEBUG_TAG,"isLoading: "+loadingData);
+            new MyAsyncTask().execute(Settings.REQUEST_URL);
+        }
 
-        //create sync task
-        new MyAsyncTask().execute(Settings.REQUEST_URL);
     }
 
     private class MyAsyncTask extends AsyncTask<String, String, String> {
@@ -114,75 +120,73 @@ public class MainActivity extends ActionBarActivity {
 
 
         protected String doInBackground(String... args) {
-            locations.clear();
-            XmlPullParserFactory factory = null;
-            XmlPullParser parser = null;
-            try {
-                factory = XmlPullParserFactory.newInstance();
-                factory.setNamespaceAware(true);
-                parser = factory.newPullParser();
-                parser.setInput(new InputStreamReader(getUrlData(args[0])));
-                int eventType = parser.getEventType();
 
-                while (eventType!=XmlPullParser.END_DOCUMENT) {
-                    String tagName = parser.getName();
-                    switch (eventType) {
-                        case XmlPullParser.START_TAG:
-                            if(tagName.equalsIgnoreCase("location")) {
-                                location = new Location();
-                            }
-                            break;
-                        case XmlPullParser.TEXT:
-                            text = parser.getText();
-                            break;
-                        case XmlPullParser.END_TAG:
-                            if(tagName.equalsIgnoreCase("location")) {
-                                locations.add(location);
-                            }
-                            else if(tagName.equalsIgnoreCase("deviceId")) {
-                                location.setDeviceId(Integer.parseInt(text));
-                            }
-                            else if(tagName.equalsIgnoreCase("street")) {
-                                location.setStreet(text);
-                            }
-                            else if(tagName.equalsIgnoreCase("city")) {
-                                location.setCity(text);
-                            }
-                            else if(tagName.equalsIgnoreCase("additionalDescription")) {
-                                location.setAdditionalDescription(text);
-                            }
-                            else if(tagName.equalsIgnoreCase("startDate")) {
-                                location.setStartDate(text);
-                            }
-                            else if(tagName.equalsIgnoreCase("endDate")) {
-                                if(text.length()<2){
-                                    location.setEndDate(null);
+                locations.clear();
+                XmlPullParserFactory factory = null;
+                XmlPullParser parser = null;
+                try {
+                    factory = XmlPullParserFactory.newInstance();
+                    factory.setNamespaceAware(true);
+                    parser = factory.newPullParser();
+                    parser.setInput(new InputStreamReader(getUrlData(args[0])));
+                    int eventType = parser.getEventType();
+
+                    while (eventType != XmlPullParser.END_DOCUMENT) {
+                        String tagName = parser.getName();
+                        switch (eventType) {
+                            case XmlPullParser.START_TAG:
+                                if (tagName.equalsIgnoreCase("location")) {
+                                    location = new Location();
                                 }
-                                else {
-                                    location.setEndDate(text);
+                                break;
+                            case XmlPullParser.TEXT:
+                                text = parser.getText();
+                                break;
+                            case XmlPullParser.END_TAG:
+                                if (tagName.equalsIgnoreCase("location")) {
+                                    locations.add(location);
+                                } else if (tagName.equalsIgnoreCase("deviceId")) {
+                                    location.setDeviceId(Integer.parseInt(text));
+                                } else if (tagName.equalsIgnoreCase("street")) {
+                                    location.setStreet(text);
+                                } else if (tagName.equalsIgnoreCase("city")) {
+                                    location.setCity(text);
+                                } else if (tagName.equalsIgnoreCase("additionalDescription")) {
+                                    location.setAdditionalDescription(text);
+                                } else if (tagName.equalsIgnoreCase("startDate")) {
+                                    location.setStartDate(text);
+                                } else if (tagName.equalsIgnoreCase("endDate")) {
+                                    if (text.length() < 2) {
+                                        location.setEndDate(null);
+                                    } else {
+                                        location.setEndDate(text);
+                                    }
                                 }
-                            }
-                            break;
-                        default:
-                            break;
+
+                                break;
+                            default:
+                                break;
+                        }
+                        eventType = parser.next();
                     }
-                    eventType = parser.next();
-                }
-            } catch (XmlPullParserException e1) {
-                e1.printStackTrace();
-            } catch (IOException e1) {
-                e1.printStackTrace();
-            } catch (URISyntaxException e) {
-                e.printStackTrace();
-            } catch (ParseException e) {
-                e.printStackTrace();
-            } catch (NullPointerException e) {
-                e.printStackTrace();
-            }
-            finally {
 
-            }
-            return null;
+
+                } catch (XmlPullParserException e1) {
+                    e1.printStackTrace();
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                } catch (URISyntaxException e) {
+                    e.printStackTrace();
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                } catch (NullPointerException e) {
+                    e.printStackTrace();
+                } finally {
+
+                }
+
+                return null;
+
         }
         private InputStream getUrlData(String url) throws URISyntaxException, IOException {
             DefaultHttpClient httpClient = new DefaultHttpClient();
@@ -192,8 +196,8 @@ public class MainActivity extends ActionBarActivity {
         }
 
         protected void onPostExecute(String result) {
+
             Calendar cal = new GregorianCalendar();
-//            Log.d(Settings.DEBUG_TAG, "updated");
             Context context = getApplicationContext();
             CharSequence appStatus;
             Location actualLocation = new Location();
@@ -202,6 +206,10 @@ public class MainActivity extends ActionBarActivity {
 
             if(actualLocations.size()>0) {
                 ListAdapter adapter = new ListAdapter(getApplicationContext(), actualLocations);
+
+                locationsListView.addHeaderView(new View(context));
+                locationsListView.addFooterView(new View(context));
+
                 locationsListView.setAdapter(adapter);
             }
 
@@ -210,6 +218,9 @@ public class MainActivity extends ActionBarActivity {
             if(actualLocation.getStreet()!=null) {
                 appStatus = context.getString(R.string.updated);
                 CustomToast.show(appStatus, context);
+                loadingData = false;
+                Log.d(Settings.DEBUG_TAG,"UPDATED");
+
                 streetTextView.setText(actualLocation.getStreet());
                 cityTextView.setText(actualLocation.getCity());
                 additionalDescriptionTextView.setText(actualLocation.getAdditionalDescription());
@@ -217,10 +228,13 @@ public class MainActivity extends ActionBarActivity {
             else {
                 appStatus = context.getString(R.string.not_active_device);
                 CustomToast.show(appStatus, context);
+                loadingData = false;
+                Log.d(Settings.DEBUG_TAG,"UPDATED");
             }
             String lastUpdateString = dateFormat.format(cal.getTime());
             lastUpdateTextView.setText(context.getString(R.string.last_update) + " " + lastUpdateString);
             saveSettings(locations, lastUpdateString);
+
         }
 
     }
@@ -242,13 +256,11 @@ public class MainActivity extends ActionBarActivity {
 
             if(now.after(loc.getStartDate()) && now.before(loc.getEndDate())) {
                 actualLocations.add(loc);
-//                Log.d(Settings.DEBUG_TAG,"Found");
             }
             else if(isSameDay(now, loc.getStartDate())) {
                 actualLocations.add(loc);
             }
             else {
-//                Log.d(Settings.DEBUG_TAG,"Not found");
             }
         }
         return actualLocations;
@@ -265,7 +277,6 @@ public class MainActivity extends ActionBarActivity {
     }
 
     private void saveSettings(ArrayList<Location> locations, String lastUpdateString) {
-//        Log.d(Settings.DEBUG_TAG, "Save settings");
         SharedPreferences sharedPreferences = getSharedPreferences(Settings.PREFERENCES, MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString(Settings.LAST_UPDATE_PREF,lastUpdateString);
@@ -284,7 +295,8 @@ public class MainActivity extends ActionBarActivity {
         switch (id) {
             case R.id.action_settings:
                 return true;
-            case R.id.refresh_data:
+            case R.id.refresh_data_item:
+
                 refreshData();
                 return true;
         }

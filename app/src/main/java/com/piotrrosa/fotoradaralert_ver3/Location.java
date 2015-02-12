@@ -1,7 +1,5 @@
 package com.piotrrosa.fotoradaralert_ver3;
 
-import android.util.Log;
-
 import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -76,15 +74,13 @@ public class Location implements Serializable{
     }
 
     public void setEndDate(String endDate) throws ParseException {
-        if(endDate!="0" && endDate!=null && endDate!="") {
-            Log.d(Settings.DEBUG_TAG, "NOT Empty or 0");
+        if(!endDate.equalsIgnoreCase("0") && endDate!=null && !endDate.equalsIgnoreCase("")) {
             Calendar cal = Calendar.getInstance();
             SimpleDateFormat sdf = new SimpleDateFormat(Settings.DATE_FORMAT);
             cal.setTime(sdf.parse(endDate));
             this.endDate = cal;
         }
         else {
-            Log.d(Settings.DEBUG_TAG, "Empty or 0");
             this.endDate=null;}
     }
 

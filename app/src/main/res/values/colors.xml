@@ -5,4 +5,8 @@
     <color name="blackish">#121212</color>
     <color name="blackish_pressed">#555555</color>
     <color name="blueish">#000f89</color>
+    <color name="actionbar_background">#3f51b5</color>
+    <color name="little_grey">#dedede</color>
+    <color name="light_blue">#c5cae9</color>
+    <color name="grey">#727272</color>
 </resources>
