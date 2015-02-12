@@ -2,27 +2,28 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="5dp"
     android:layout_margin="2dp"
-    android:background="@drawable/selector_card_background">
+    android:padding="2dp"
+    android:background="@drawable/selector_card_background"
+    >
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="@dimen/medium_padding"
+        android:padding="@dimen/small_padding"
         android:background="@color/actionbar_background">
 
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:paddingBottom="@dimen/abc_action_bar_icon_vertical_padding"
+            android:paddingBottom="@dimen/small_padding"
             >
             <TextView
                 android:id="@+id/streetOnListTextView"
                 android:layout_width="0dp"
                 android:layout_weight="1"
-                android:textSize="20sp"
+                android:textSize="15sp"
                 android:textColor="@color/white"
                 android:layout_height="wrap_content"
                 android:text="Street" />
@@ -40,29 +41,36 @@
             android:layout_height="wrap_content"
             android:text="@string/description_text_view"
             android:textColor="@color/light_blue"
+            android:textSize="12sp"
             android:id="@+id/additional_description_text_view"
             />
-</LinearLayout>
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    </LinearLayout>
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:background="@android:color/transparent"
-        android:paddingTop="@dimen/medium_padding"
-        android:paddingBottom="@dimen/medium_padding"
-        android:paddingLeft="@dimen/medium_padding"
+        android:paddingTop="@dimen/small_padding"
+        android:paddingBottom="@dimen/small_padding"
+        android:paddingLeft="@dimen/small_padding"
         android:layout_marginBottom="2dp">
         <ImageView
             android:id="@+id/whole_day_image_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_data_usage_grey600_18dp"
-            android:visibility="gone"/>
+            android:visibility="invisible"
+            android:layout_alignParentEnd="false"
+            android:layout_alignParentRight="false"
+             />
         <ImageView
             android:id="@+id/start_time_ImageView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_access_time_grey600_18dp"/>
+            android:src="@drawable/ic_access_time_grey600_18dp"
+            android:layout_alignParentEnd="false"
+            android:layout_alignParentRight="false"
+            />
         <TextView
             android:id="@+id/start_time_textView"
             android:layout_width="wrap_content"
@@ -70,13 +78,21 @@
             android:textSize="14dp"
             android:layout_gravity="end"
             android:layout_height="wrap_content"
-            android:text="@string/start_time_text_view" />
+            android:text="@string/start_time_text_view"
+            android:layout_alignParentTop="true"
+            android:layout_toRightOf="@+id/start_time_ImageView"
+            android:layout_toEndOf="@+id/start_time_ImageView"
+            android:layout_centerVertical="true" />
         <ImageView
             android:id="@+id/end_time_imageView"
-            android:layout_marginLeft="20dp"
+            android:layout_marginLeft="21dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_access_alarm_grey600_18dp"/>
+            android:src="@drawable/ic_access_alarm_grey600_18dp"
+            android:layout_alignParentTop="true"
+            android:layout_toRightOf="@+id/start_time_textView"
+            android:layout_toEndOf="@+id/start_time_textView"
+            android:layout_marginStart="21dp" />
         <TextView
             android:id="@+id/end_time_textView"
             android:layout_width="wrap_content"
@@ -84,6 +100,36 @@
             android:layout_gravity="end"
             android:textColor="@color/grey"
             android:text="@string/end_time_text_view"
-            android:textSize="14dp"/>
-    </LinearLayout>
+            android:textSize="14dp"
+            android:layout_alignTop="@+id/end_time_imageView"
+            android:layout_toRightOf="@+id/end_time_imageView"
+            android:layout_toEndOf="@+id/end_time_imageView"
+            android:layout_centerVertical="true" />
+
+
+        <ImageView
+            android:id="@+id/date_imageView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:src="@drawable/ic_event_grey600_18dp"
+            android:layout_alignTop="@+id/date_textView"
+            android:layout_toLeftOf="@+id/date_textView"
+            android:layout_toStartOf="@+id/date_textView"
+            android:layout_centerVertical="true" />
+        <TextView
+            android:id="@+id/date_textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="end"
+            android:textColor="@color/grey"
+            android:text="@string/date_text_view"
+            android:textSize="14dp"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true"
+            android:paddingRight="@dimen/small_padding"
+            android:layout_alignParentEnd="true" />
+
+
+    </RelativeLayout>
 </LinearLayout>

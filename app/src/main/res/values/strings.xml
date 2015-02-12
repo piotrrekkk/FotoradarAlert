@@ -21,5 +21,6 @@
     <string name="end_time_text_view">15:00</string>
     <string name="not_specified_time">Nie określono godziny</string>
     <string name="list_is_empty">Lista aktualnie jest pusta</string>
+    <string name="date_text_view">12.02.2014</string>
 
 </resources>

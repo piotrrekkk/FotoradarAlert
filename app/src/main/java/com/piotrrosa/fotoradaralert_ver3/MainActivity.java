@@ -14,6 +14,9 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
@@ -24,6 +27,7 @@ import org.xmlpull.v1.XmlPullParserFactory;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.reflect.Type;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.text.ParseException;
@@ -69,25 +73,51 @@ public class MainActivity extends ActionBarActivity {
         setContentView(R.layout.activity_main);
 
         locationsListView = (ListView) findViewById(R.id.locationsListView);
+        locationsListView.addHeaderView(new View(this));
+        locationsListView.addFooterView(new View(this));
 
         //check updatedData
         SharedPreferences settings = getSharedPreferences(Settings.PREFERENCES, MODE_PRIVATE);
 
-        //init fields
-        lastUpdateTextView = (TextView) findViewById(R.id.main_activity_status_textView);
+        if(settings!=null) {
 
-        String prefLastUpdateString = settings.getString(Settings.LAST_UPDATE_PREF, null);
-        if(prefLastUpdateString!=null) {
-            lastUpdateTextView.setText(getApplicationContext().getString(R.string.last_update) + prefLastUpdateString);
-        }
-        else {
+            Gson gson = new Gson();
+            String json = settings.getString(Settings.LOCATION_LIST, null);
+            Type type = new TypeToken<ArrayList<Location>>() {}.getType();
+            ArrayList<Location> locations1 = new ArrayList<Location>();
 
+            locations1 = gson.fromJson(json, type);
+            locations = locations1;
+            Log.d(Settings.DEBUG_TAG,"Locations from SharePref: "+locations1.toString());
+            showResult(locations1);
+
+            //init fields
+            lastUpdateTextView = (TextView) findViewById(R.id.main_activity_status_textView);
+
+            String prefLastUpdateString = settings.getString(Settings.LAST_UPDATE_PREF, null);
+            if(prefLastUpdateString!=null) {
+                lastUpdateTextView.setText(getApplicationContext().getString(R.string.last_update) + prefLastUpdateString);
+            }
         }
-        refreshData();
+
+//        refreshData();
         showMoreDays = (Button) findViewById(R.id.showMoreDays);
         showMoreDays.setOnClickListener(showMore);
     }
 
+    private void showResult(ArrayList<Location> locations1) {
+
+        Context context = getApplicationContext();
+        ArrayList<Location> actualLocations = new ArrayList<Location>();
+        actualLocations = checkActualLocation(locations1);
+
+        if(actualLocations.size()>0) {
+            ListAdapter adapter = new ListAdapter(getApplicationContext(), actualLocations);
+
+
+            locationsListView.setAdapter(adapter);
+        }
+    }
 
     public View.OnClickListener showMore = new View.OnClickListener() {
         @Override
@@ -129,6 +159,7 @@ public class MainActivity extends ActionBarActivity {
                     factory.setNamespaceAware(true);
                     parser = factory.newPullParser();
                     parser.setInput(new InputStreamReader(getUrlData(args[0])));
+
                     int eventType = parser.getEventType();
 
                     while (eventType != XmlPullParser.END_DOCUMENT) {
@@ -207,9 +238,6 @@ public class MainActivity extends ActionBarActivity {
             if(actualLocations.size()>0) {
                 ListAdapter adapter = new ListAdapter(getApplicationContext(), actualLocations);
 
-                locationsListView.addHeaderView(new View(context));
-                locationsListView.addFooterView(new View(context));
-
                 locationsListView.setAdapter(adapter);
             }
 
@@ -237,15 +265,12 @@ public class MainActivity extends ActionBarActivity {
 
         }
 
+
+
     }
 
-//    private ArrayList<Location> filterLocations(ArrayList<Location> locations) {
-//        Calendar now = new GregorianCalendar();
-//        for (Location loc:locations) {
-//
-//
-//        }
-//    }
+    
+
 
     private ArrayList<Location> checkActualLocation(ArrayList<Location> locations) {
         ArrayList<Location> actualLocations = new ArrayList<Location>();
@@ -276,10 +301,16 @@ public class MainActivity extends ActionBarActivity {
                 cal1.get(Calendar.DAY_OF_YEAR) == cal2.get(Calendar.DAY_OF_YEAR));
     }
 
-    private void saveSettings(ArrayList<Location> locations, String lastUpdateString) {
+    private void saveSettings(ArrayList<Location> locations, String lastUpdateString)  {
+
+        //prepare locations to save
+        Gson gson = new Gson();
+        String json = gson.toJson(locations);
+        Log.d(Settings.DEBUG_TAG,"Locations:"+locations.toString());
         SharedPreferences sharedPreferences = getSharedPreferences(Settings.PREFERENCES, MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString(Settings.LAST_UPDATE_PREF,lastUpdateString);
+        editor.putString(Settings.LOCATION_LIST,json);
         editor.commit();
     }
 

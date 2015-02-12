@@ -74,7 +74,7 @@ public class Location implements Serializable{
     }
 
     public void setEndDate(String endDate) throws ParseException {
-        if(!endDate.equalsIgnoreCase("0") && endDate!=null && !endDate.equalsIgnoreCase("")) {
+        if(endDate!="0" && endDate!=null && endDate!="") {
             Calendar cal = Calendar.getInstance();
             SimpleDateFormat sdf = new SimpleDateFormat(Settings.DATE_FORMAT);
             cal.setTime(sdf.parse(endDate));

@@ -32,7 +32,7 @@ public class LocationList extends ActionBarActivity {
         }
 
         if(currentLocations.size()>0) {
-            ListAdapter adapter = new ListAdapter(this, currentLocations);
+            NextDaysListAdapter adapter = new NextDaysListAdapter(this, currentLocations);
             locationsListView.addHeaderView(new View(this));
             locationsListView.addFooterView(new View(this));
             locationsListView.setAdapter(adapter);

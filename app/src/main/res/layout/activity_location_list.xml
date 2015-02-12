@@ -10,10 +10,11 @@
         android:divider="@null"
         android:layout_marginLeft="@dimen/medium_padding"
         android:layout_marginRight="@dimen/medium_padding"
-        android:dividerHeight="10dp"
+        android:dividerHeight="@dimen/small_padding"
         android:listSelector="@android:color/transparent"
         android:cacheColorHint="@android:color/transparent"
         android:headerDividersEnabled="true"
+        android:scrollbars="none"
         android:footerDividersEnabled="true"
         android:id="@+id/locationsListView">
         </ListView>

@@ -12,4 +12,5 @@ public class Settings {
     public static final String DEBUG_TAG = "FOTORADAR_ALERT";
     public static final String LAST_UPDATE_PREF = "LAST_UPDATE_PREFERENCE";
     public static final String PREFERENCES = "com.piotrrosa.fotoradaralert.APP_PREFERENCES";
+    public static final String LOCATION_LIST = "com.piotrrosa.fotoradaralert.LOCATION_LIST";
 }
