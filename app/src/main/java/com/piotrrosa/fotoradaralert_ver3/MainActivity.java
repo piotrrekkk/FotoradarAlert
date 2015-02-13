@@ -151,7 +151,7 @@ public class MainActivity extends ActionBarActivity {
 
         protected String doInBackground(String... args) {
 
-                locations.clear();
+
                 XmlPullParserFactory factory = null;
                 XmlPullParser parser = null;
                 try {
@@ -161,7 +161,7 @@ public class MainActivity extends ActionBarActivity {
                     parser.setInput(new InputStreamReader(getUrlData(args[0])));
 
                     int eventType = parser.getEventType();
-
+                    locations.clear();
                     while (eventType != XmlPullParser.END_DOCUMENT) {
                         String tagName = parser.getName();
                         switch (eventType) {
