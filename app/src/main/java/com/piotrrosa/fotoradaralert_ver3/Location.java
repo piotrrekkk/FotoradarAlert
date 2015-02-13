@@ -63,15 +63,6 @@ public class Location implements Serializable{
     public Calendar getEndDate() {
         return endDate;
     }
-    public String endDateToSring() {
-        String endDateText ="";
-        return endDateText;
-    }
-
-    public String startDateToSring() {
-        String startDateText ="";
-        return startDateText;
-    }
 
     public void setEndDate(String endDate) throws ParseException {
         if(endDate!="0" && endDate!=null && endDate!="") {

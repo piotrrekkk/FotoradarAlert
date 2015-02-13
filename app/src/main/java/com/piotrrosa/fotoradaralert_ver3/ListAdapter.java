@@ -13,6 +13,7 @@ import java.util.Calendar;
 
 /**
  * Created by piotr on 04.02.15.
+ * This is adapter for ListView on MainActivity
  */
 public class ListAdapter extends ArrayAdapter<Location> {
 
@@ -56,8 +57,8 @@ public class ListAdapter extends ArrayAdapter<Location> {
             startTimeImageView.setVisibility(View.VISIBLE);
             endTextView.setVisibility(View.VISIBLE);
             endTimeImageView.setVisibility(View.VISIBLE);
-            startTextView.setText(MainActivity.shortDateFormat.format(startDate.getTime()));
-            endTextView.setText(MainActivity.shortDateFormat.format(endDate.getTime()));
+            startTextView.setText(Settings.HOURS_DATE_FORMAT.format(startDate.getTime()));
+            endTextView.setText(Settings.HOURS_DATE_FORMAT.format(endDate.getTime()));
         }
 
         descriptionTextView.setText(location.getAdditionalDescription());

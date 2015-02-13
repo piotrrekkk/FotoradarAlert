@@ -31,37 +31,18 @@ import java.lang.reflect.Type;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
 public class MainActivity extends ActionBarActivity {
 
-    public static SimpleDateFormat dateFormat = new SimpleDateFormat(Settings.DATE_FORMAT);
-    public static SimpleDateFormat shortDateFormat = new SimpleDateFormat(Settings.SHORT_DATE_FORMAT);
-    public static SimpleDateFormat dateFormatWholeDay = new SimpleDateFormat(Settings.DATE_FORMAT_WHOLE_DAY);
-    public boolean loadingData;
+    Data data = new Data();
     Location location;
     ArrayList<Location> locations = new ArrayList<Location>();
     ListView locationsListView;
-    //define fields
     TextView lastUpdateTextView;
-    TextView streetTextView;
-    TextView cityTextView;
-    TextView additionalDescriptionTextView;
     Button showMoreDays;
-    String[][] xmlPullParserArray = {
-            {"deviceId", "0"},
-            {"street", "0"},
-            {"city", "0"},
-            {"additionalDescription", "0"},
-            {"startDate", "0"},
-            {"endDate", "0"}
-    };
-
-    static final String KEY_ITEM = "locations";
-
 
     int parserArrayIncrement = 0;
     String text ="";
@@ -69,7 +50,7 @@ public class MainActivity extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-        loadingData=false;
+        data.setDataStatus(false);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -77,49 +58,45 @@ public class MainActivity extends ActionBarActivity {
         locationsListView.addHeaderView(new View(this));
         locationsListView.addFooterView(new View(this));
 
-        //check updatedData
-        SharedPreferences settings = getSharedPreferences(Settings.PREFERENCES, MODE_PRIVATE);
+        //get data from Shared Preferences
+        SharedPreferences sharedPreferences = getSharedPreferences(Settings.PREFERENCES, MODE_PRIVATE);
 
-        //init fields
         lastUpdateTextView = (TextView) findViewById(R.id.main_activity_status_textView);
+        showMoreDays = (Button) findViewById(R.id.showMoreDays);
+        showMoreDays.setOnClickListener(showMore);
 
-        if(settings!=null) {
+        if(sharedPreferences!=null) {
 
             Gson gson = new Gson();
-            String json = settings.getString(Settings.LOCATION_LIST, null);
-            if(json!=null) {
+            String locations_json = sharedPreferences.getString(Settings.LOCATION_LIST, null);
+            if(locations_json!=null) {
                 Type type = new TypeToken<ArrayList<Location>>() {
                 }.getType();
-                ArrayList<Location> locations1 = new ArrayList<Location>();
+                ArrayList<Location> locations_sharedPreferences = new ArrayList<Location>();
 
-                locations1 = gson.fromJson(json, type);
+                locations_sharedPreferences = gson.fromJson(locations_json, type);
 
-                locations = locations1;
-                Log.d(Settings.DEBUG_TAG, "Locations from SharePref: " + locations1.toString());
-                showResult(locations1);
+                locations = locations_sharedPreferences;
+                updateList(locations_sharedPreferences);
 
-                String prefLastUpdateString = settings.getString(Settings.LAST_UPDATE_PREF, null);
-                if (prefLastUpdateString != null) {
-                    lastUpdateTextView.setText(getApplicationContext().getString(R.string.last_update) + prefLastUpdateString);
+                String lastUpdateInfo = sharedPreferences.getString(Settings.LAST_UPDATE_PREF, null);
+                if (lastUpdateInfo != null) {
+                    lastUpdateTextView.setText(getApplicationContext().getString(R.string.last_update) + lastUpdateInfo);
                 }
             }
         }
-
-//        refreshData();
-        showMoreDays = (Button) findViewById(R.id.showMoreDays);
-        showMoreDays.setOnClickListener(showMore);
+        else {
+            refreshData();
+        }
     }
 
-    private void showResult(ArrayList<Location> locations1) {
+    private void updateList(ArrayList<Location> locations_sharedPreferences) {
 
-        Context context = getApplicationContext();
         ArrayList<Location> actualLocations = new ArrayList<Location>();
-        actualLocations = checkActualLocation(locations1);
+        actualLocations = checkActualLocations(locations_sharedPreferences);
 
         if(actualLocations.size()>0) {
             ListAdapter adapter = new ListAdapter(getApplicationContext(), actualLocations);
-
-
             locationsListView.setAdapter(adapter);
         }
     }
@@ -128,34 +105,28 @@ public class MainActivity extends ActionBarActivity {
         @Override
         public void onClick(View view) {
             Bundle bundle = new Bundle();
-            bundle.putSerializable("locationsList",locations);
+            bundle.putSerializable(Settings.LOCATIONS_BUNDLE,locations);
             Intent intent = new Intent(view.getContext(), LocationList.class);
             intent.putExtras(bundle);
             startActivity(intent);
         }
     };
     private void refreshData() {
-        Log.d(Settings.DEBUG_TAG,"refreshing:"+loadingData);
-        if(loadingData==false) {
-            Log.d(Settings.DEBUG_TAG,"isLoading: "+loadingData);
+        if(data.isLoading()==false) {
             parserArrayIncrement = 0;
             Context context = getApplicationContext();
             CharSequence appStatus = context.getString(R.string.refreshing);
             CustomToast.show(appStatus, context);
+
             //create sync task
-            loadingData=true;
-            Log.d(Settings.DEBUG_TAG,"isLoading: "+loadingData);
+            data.setDataStatus(true);
             new MyAsyncTask().execute(Settings.REQUEST_URL);
         }
-
     }
 
     private class MyAsyncTask extends AsyncTask<String, String, String> {
 
-
-
         protected String doInBackground(String... args) {
-
 
                 XmlPullParserFactory factory = null;
                 XmlPullParser parser = null;
@@ -220,7 +191,6 @@ public class MainActivity extends ActionBarActivity {
                 } finally {
 
                 }
-
                 return null;
 
         }
@@ -236,72 +206,46 @@ public class MainActivity extends ActionBarActivity {
             Calendar cal = new GregorianCalendar();
             Context context = getApplicationContext();
             CharSequence appStatus;
-            Location actualLocation = new Location();
             ArrayList<Location> actualLocations = new ArrayList<Location>();
-            actualLocations = checkActualLocation(locations);
+            actualLocations = checkActualLocations(locations);
 
             if(actualLocations.size()>0) {
                 ListAdapter adapter = new ListAdapter(getApplicationContext(), actualLocations);
                 appStatus = context.getString(R.string.updated);
                 CustomToast.show(appStatus, context);
-                loadingData = false;
-
+                data.setDataStatus(false);
                 locationsListView.setAdapter(adapter);
             }
             else {
                 appStatus = context.getString(R.string.not_active_device);
                 CustomToast.show(appStatus, context);
-                loadingData = false;
-
+                data.setDataStatus(false);
             }
-            // locations = filterLocations(locations);
 
-
-            String lastUpdateString = dateFormat.format(cal.getTime());
+            String lastUpdateString = Settings.FULL_DATE_FORMAT.format(cal.getTime());
             lastUpdateTextView.setText(context.getString(R.string.last_update) + " " + lastUpdateString);
             saveSettings(locations, lastUpdateString);
-
         }
-
-
-
     }
 
     
 
 
-    private ArrayList<Location> checkActualLocation(ArrayList<Location> locations) {
+    private ArrayList<Location> checkActualLocations(ArrayList<Location> locations) {
         ArrayList<Location> actualLocations = new ArrayList<Location>();
 
-        Location location = new Location();
         Calendar now = new GregorianCalendar();
         for (Location loc:locations) {
-
-            if(isSameDay(now, loc.getStartDate())) {
+            if(Dates.isSameDay(now, loc.getStartDate())) {
                 actualLocations.add(loc);
-            }
-            else {
             }
         }
         return actualLocations;
     }
 
-    private boolean isSameDay(Calendar cal1, Calendar cal2) {
-
-        if (cal1 == null || cal2 == null) {
-            throw new IllegalArgumentException("The dates must not be null");
-        }
-        return (cal1.get(Calendar.ERA) == cal2.get(Calendar.ERA) &&
-                cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR) &&
-                cal1.get(Calendar.DAY_OF_YEAR) == cal2.get(Calendar.DAY_OF_YEAR));
-    }
-
     private void saveSettings(ArrayList<Location> locations, String lastUpdateString)  {
-
-        //prepare locations to save
         Gson gson = new Gson();
         String json = gson.toJson(locations);
-        Log.d(Settings.DEBUG_TAG,"Locations:"+locations.toString());
         SharedPreferences sharedPreferences = getSharedPreferences(Settings.PREFERENCES, MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString(Settings.LAST_UPDATE_PREF,lastUpdateString);
