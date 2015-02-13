@@ -73,7 +73,6 @@ public class MainActivity extends ActionBarActivity {
         showMoreDays.setOnClickListener(showMore);
 
         if(sharedPreferences!=null) {
-
             Gson gson = new Gson();
             String locations_json = sharedPreferences.getString(Settings.LOCATION_LIST, null);
             if(locations_json!=null) {
