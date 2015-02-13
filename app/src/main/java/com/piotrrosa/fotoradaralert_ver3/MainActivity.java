@@ -68,6 +68,7 @@ public class MainActivity extends ActionBarActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         loadingData=false;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -79,24 +80,28 @@ public class MainActivity extends ActionBarActivity {
         //check updatedData
         SharedPreferences settings = getSharedPreferences(Settings.PREFERENCES, MODE_PRIVATE);
 
+        //init fields
+        lastUpdateTextView = (TextView) findViewById(R.id.main_activity_status_textView);
+
         if(settings!=null) {
 
             Gson gson = new Gson();
             String json = settings.getString(Settings.LOCATION_LIST, null);
-            Type type = new TypeToken<ArrayList<Location>>() {}.getType();
-            ArrayList<Location> locations1 = new ArrayList<Location>();
+            if(json!=null) {
+                Type type = new TypeToken<ArrayList<Location>>() {
+                }.getType();
+                ArrayList<Location> locations1 = new ArrayList<Location>();
 
-            locations1 = gson.fromJson(json, type);
-            locations = locations1;
-            Log.d(Settings.DEBUG_TAG,"Locations from SharePref: "+locations1.toString());
-            showResult(locations1);
+                locations1 = gson.fromJson(json, type);
 
-            //init fields
-            lastUpdateTextView = (TextView) findViewById(R.id.main_activity_status_textView);
+                locations = locations1;
+                Log.d(Settings.DEBUG_TAG, "Locations from SharePref: " + locations1.toString());
+                showResult(locations1);
 
-            String prefLastUpdateString = settings.getString(Settings.LAST_UPDATE_PREF, null);
-            if(prefLastUpdateString!=null) {
-                lastUpdateTextView.setText(getApplicationContext().getString(R.string.last_update) + prefLastUpdateString);
+                String prefLastUpdateString = settings.getString(Settings.LAST_UPDATE_PREF, null);
+                if (prefLastUpdateString != null) {
+                    lastUpdateTextView.setText(getApplicationContext().getString(R.string.last_update) + prefLastUpdateString);
+                }
             }
         }
 
@@ -237,28 +242,21 @@ public class MainActivity extends ActionBarActivity {
 
             if(actualLocations.size()>0) {
                 ListAdapter adapter = new ListAdapter(getApplicationContext(), actualLocations);
-
-                locationsListView.setAdapter(adapter);
-            }
-
-
-            // locations = filterLocations(locations);
-            if(actualLocation.getStreet()!=null) {
                 appStatus = context.getString(R.string.updated);
                 CustomToast.show(appStatus, context);
                 loadingData = false;
-                Log.d(Settings.DEBUG_TAG,"UPDATED");
 
-                streetTextView.setText(actualLocation.getStreet());
-                cityTextView.setText(actualLocation.getCity());
-                additionalDescriptionTextView.setText(actualLocation.getAdditionalDescription());
+                locationsListView.setAdapter(adapter);
             }
             else {
                 appStatus = context.getString(R.string.not_active_device);
                 CustomToast.show(appStatus, context);
                 loadingData = false;
-                Log.d(Settings.DEBUG_TAG,"UPDATED");
+
             }
+            // locations = filterLocations(locations);
+
+
             String lastUpdateString = dateFormat.format(cal.getTime());
             lastUpdateTextView.setText(context.getString(R.string.last_update) + " " + lastUpdateString);
             saveSettings(locations, lastUpdateString);
@@ -279,10 +277,7 @@ public class MainActivity extends ActionBarActivity {
         Calendar now = new GregorianCalendar();
         for (Location loc:locations) {
 
-            if(now.after(loc.getStartDate()) && now.before(loc.getEndDate())) {
-                actualLocations.add(loc);
-            }
-            else if(isSameDay(now, loc.getStartDate())) {
+            if(isSameDay(now, loc.getStartDate())) {
                 actualLocations.add(loc);
             }
             else {

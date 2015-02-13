@@ -29,6 +29,7 @@ public class NextDaysListAdapter extends ArrayAdapter<Location> {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.next_days_list_item, parent, false);
         }
 
+        TextView date_textView = (TextView) convertView.findViewById(R.id.date_textView);
         TextView descriptionTextView = (TextView) convertView.findViewById(R.id.additional_description_text_view);
         ImageView wholeDayImageView = (ImageView) convertView.findViewById(R.id.whole_day_image_view);
 
@@ -51,6 +52,8 @@ public class NextDaysListAdapter extends ArrayAdapter<Location> {
             startTextView.setText(getContext().getString(R.string.not_specified_time));
 
 
+
+
         }
         else {
             wholeDayImageView.setVisibility(View.INVISIBLE);
@@ -59,8 +62,10 @@ public class NextDaysListAdapter extends ArrayAdapter<Location> {
             endTimeImageView.setVisibility(View.VISIBLE);
             startTextView.setText(MainActivity.shortDateFormat.format(startDate.getTime()));
             endTextView.setText(MainActivity.shortDateFormat.format(endDate.getTime()));
+
         }
 
+        date_textView.setText(MainActivity.dateFormatWholeDay.format(startDate.getTime()));
         descriptionTextView.setText(location.getAdditionalDescription());
         streetTextView.setText(location.getStreet());
         cityTextView.setText(location.getCity());
