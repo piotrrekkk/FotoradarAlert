@@ -6,7 +6,6 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -14,6 +13,8 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -53,6 +54,12 @@ public class MainActivity extends ActionBarActivity {
         data.setDataStatus(false);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+
+        // Analitycs
+        Tracker t = ((FotoAlertApplication) getApplication()).getTracker();
+        t.setScreenName("Main Activity");
+        t.send(new HitBuilders.AppViewBuilder().build());
 
         locationsListView = (ListView) findViewById(R.id.locationsListView);
         locationsListView.addHeaderView(new View(this));

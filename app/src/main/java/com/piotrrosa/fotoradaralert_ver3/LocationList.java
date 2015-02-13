@@ -7,6 +7,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
 
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -18,6 +21,12 @@ public class LocationList extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_location_list);
+
+        // Analitycs
+        Tracker t = ((FotoAlertApplication) getApplication()).getTracker();
+        t.setScreenName("Main Activity");
+        t.send(new HitBuilders.AppViewBuilder().build());
+
         ArrayList<Location> locations = new ArrayList<Location>();
         locationsListView = (ListView) findViewById(R.id.locationsListView);
         locations = (ArrayList<Location>) getIntent().getSerializableExtra(Settings.LOCATIONS_BUNDLE);
