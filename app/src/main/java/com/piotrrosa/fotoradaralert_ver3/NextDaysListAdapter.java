@@ -50,22 +50,18 @@ public class NextDaysListAdapter extends ArrayAdapter<Location> {
             endTextView.setVisibility(View.GONE);
             endTimeImageView.setVisibility(View.GONE);
             startTextView.setText(getContext().getString(R.string.not_specified_time));
-
-
-
-
         }
         else {
             wholeDayImageView.setVisibility(View.INVISIBLE);
             startTimeImageView.setVisibility(View.VISIBLE);
             endTextView.setVisibility(View.VISIBLE);
             endTimeImageView.setVisibility(View.VISIBLE);
-            startTextView.setText(MainActivity.shortDateFormat.format(startDate.getTime()));
-            endTextView.setText(MainActivity.shortDateFormat.format(endDate.getTime()));
+            startTextView.setText(Settings.HOURS_DATE_FORMAT.format(startDate.getTime()));
+            endTextView.setText(Settings.HOURS_DATE_FORMAT.format(endDate.getTime()));
 
         }
 
-        date_textView.setText(MainActivity.dateFormatWholeDay.format(startDate.getTime()));
+        date_textView.setText(Settings.DAY_DATE_FORMAT.format(startDate.getTime()));
         descriptionTextView.setText(location.getAdditionalDescription());
         streetTextView.setText(location.getStreet());
         cityTextView.setText(location.getCity());
