@@ -258,7 +258,7 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
         @Override
         public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
             Intent intent = new Intent(Intent.ACTION_VIEW);
-            String coordinates = String.valueOf(locations.get(i).getGeoCoordinates());
+            String coordinates = String.valueOf(locations.get(i-1).getGeoCoordinates());
             Log.d(Settings.DEBUG_TAG, "Coordinates: " + coordinates);
             intent.setData(Uri.parse("geo:0,0?q=" + (coordinates)));
             try {
