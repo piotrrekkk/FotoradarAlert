@@ -16,6 +16,17 @@ public class Location implements Serializable{
     private String additionalDescription;
     private Calendar startDate;
     private Calendar endDate;
+    private String geoCoordinates;
+
+    public String getGeoCoordinates() {
+        return geoCoordinates;
+    }
+
+    public void setGeoCoordinates(String geoCoordinates) {
+        this.geoCoordinates = geoCoordinates;
+    }
+
+
 
     public int getDeviceId() {
         return deviceId;

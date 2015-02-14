@@ -1,10 +1,14 @@
 package com.piotrrosa.fotoradaralert_ver3;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.google.android.gms.analytics.HitBuilders;
@@ -15,8 +19,9 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 
 
-public class LocationList extends ActionBarActivity {
+public class LocationList extends ActionBarActivity implements AdapterView.OnItemClickListener {
     ListView locationsListView;
+    ArrayList<Location> currentLocations = new ArrayList<Location>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -31,7 +36,7 @@ public class LocationList extends ActionBarActivity {
         locationsListView = (ListView) findViewById(R.id.locationsListView);
         locations = (ArrayList<Location>) getIntent().getSerializableExtra(Settings.LOCATIONS_BUNDLE);
 
-        ArrayList<Location> currentLocations = new ArrayList<Location>();
+
         Calendar now = new GregorianCalendar();
         now.add(Calendar.DAY_OF_YEAR, -1);
         for(Location loc:locations) {
@@ -45,6 +50,7 @@ public class LocationList extends ActionBarActivity {
             locationsListView.addHeaderView(new View(this));
             locationsListView.addFooterView(new View(this));
             locationsListView.setAdapter(adapter);
+            locationsListView.setOnItemClickListener(this);
         }
         else {
             CharSequence dataStatus = getString(R.string.list_is_empty);
@@ -67,5 +73,20 @@ public class LocationList extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+        System.out.println("Street: "+currentLocations.get(i).getStreet());
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        String coordinates = String.valueOf(currentLocations.get(i).getGeoCoordinates());
+        Log.d(Settings.DEBUG_TAG,"Coordinates: "+coordinates );
+        intent.setData(Uri.parse("geo:0,0?q=" + (coordinates)));
+        try {
+            startActivity(intent);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 }
