@@ -3,12 +3,15 @@ package com.piotrrosa.fotoradaralert_ver3;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -36,7 +39,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends ActionBarActivity implements AdapterView.OnItemClickListener {
 
     Data data = new Data();
     Location location;
@@ -64,6 +67,7 @@ public class MainActivity extends ActionBarActivity {
         locationsListView = (ListView) findViewById(R.id.locationsListView);
         locationsListView.addHeaderView(new View(this));
         locationsListView.addFooterView(new View(this));
+
 
         //get data from Shared Preferences
         SharedPreferences sharedPreferences = getSharedPreferences(Settings.PREFERENCES, MODE_PRIVATE);
@@ -104,6 +108,7 @@ public class MainActivity extends ActionBarActivity {
         if(actualLocations.size()>0) {
             ListAdapter adapter = new ListAdapter(getApplicationContext(), actualLocations);
             locationsListView.setAdapter(adapter);
+            locationsListView.setOnItemClickListener(this);
         }
     }
 
@@ -130,7 +135,20 @@ public class MainActivity extends ActionBarActivity {
         }
     }
 
-    private class MyAsyncTask extends AsyncTask<String, String, String> {
+    @Override
+    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        String coordinates = String.valueOf(locations.get(i).getGeoCoordinates());
+        Log.d(Settings.DEBUG_TAG, "Coordinates: " + coordinates);
+        intent.setData(Uri.parse("geo:0,0?q=" + (coordinates)));
+        try {
+            startActivity(intent);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private class MyAsyncTask extends AsyncTask<String, String, String> implements AdapterView.OnItemClickListener {
 
         protected String doInBackground(String... args) {
 
@@ -174,6 +192,9 @@ public class MainActivity extends ActionBarActivity {
                                     } else {
                                         location.setEndDate(text);
                                     }
+                                }
+                                else if (tagName.equalsIgnoreCase("coordinates")) {
+                                    location.setGeoCoordinates(text);
                                 }
 
                                 break;
@@ -221,6 +242,7 @@ public class MainActivity extends ActionBarActivity {
                 CustomToast.show(appStatus, context);
                 data.setDataStatus(false);
                 locationsListView.setAdapter(adapter);
+                locationsListView.setOnItemClickListener(this);
             }
             else {
                 appStatus = context.getString(R.string.not_active_device);
@@ -231,6 +253,19 @@ public class MainActivity extends ActionBarActivity {
             String lastUpdateString = Settings.FULL_DATE_FORMAT.format(cal.getTime());
             lastUpdateTextView.setText(context.getString(R.string.last_update) + " " + lastUpdateString);
             saveSettings(locations, lastUpdateString);
+        }
+
+        @Override
+        public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            String coordinates = String.valueOf(locations.get(i).getGeoCoordinates());
+            Log.d(Settings.DEBUG_TAG, "Coordinates: " + coordinates);
+            intent.setData(Uri.parse("geo:0,0?q=" + (coordinates)));
+            try {
+                startActivity(intent);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 
