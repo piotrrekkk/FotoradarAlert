@@ -77,7 +77,6 @@ public class LocationList extends ActionBarActivity implements AdapterView.OnIte
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-        System.out.println("Street: "+currentLocations.get(i).getStreet());
         Intent intent = new Intent(Intent.ACTION_VIEW);
         String coordinates = String.valueOf(currentLocations.get(i).getGeoCoordinates());
         Log.d(Settings.DEBUG_TAG,"Coordinates: "+coordinates );

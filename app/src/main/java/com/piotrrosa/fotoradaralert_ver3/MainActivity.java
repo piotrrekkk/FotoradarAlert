@@ -3,9 +3,11 @@ package com.piotrrosa.fotoradaralert_ver3;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -135,10 +137,18 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-        System.out.println("row Number Clicked "+ i);
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        String coordinates = String.valueOf(locations.get(i).getGeoCoordinates());
+        Log.d(Settings.DEBUG_TAG, "Coordinates: " + coordinates);
+        intent.setData(Uri.parse("geo:0,0?q=" + (coordinates)));
+        try {
+            startActivity(intent);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
-    private class MyAsyncTask extends AsyncTask<String, String, String> {
+    private class MyAsyncTask extends AsyncTask<String, String, String> implements AdapterView.OnItemClickListener {
 
         protected String doInBackground(String... args) {
 
@@ -232,7 +242,7 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
                 CustomToast.show(appStatus, context);
                 data.setDataStatus(false);
                 locationsListView.setAdapter(adapter);
-                locationsListView.setOnItemClickListener((AdapterView.OnItemClickListener) this);
+                locationsListView.setOnItemClickListener(this);
             }
             else {
                 appStatus = context.getString(R.string.not_active_device);
@@ -243,6 +253,19 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
             String lastUpdateString = Settings.FULL_DATE_FORMAT.format(cal.getTime());
             lastUpdateTextView.setText(context.getString(R.string.last_update) + " " + lastUpdateString);
             saveSettings(locations, lastUpdateString);
+        }
+
+        @Override
+        public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            String coordinates = String.valueOf(locations.get(i).getGeoCoordinates());
+            Log.d(Settings.DEBUG_TAG, "Coordinates: " + coordinates);
+            intent.setData(Uri.parse("geo:0,0?q=" + (coordinates)));
+            try {
+                startActivity(intent);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 
